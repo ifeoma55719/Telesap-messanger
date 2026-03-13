@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zangi Messenger - Login</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="theme-toggle">
+        <button id="themeBtn" onclick="toggleTheme()">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="logo-section">
+            <div class="logo">
+                <i class="fas fa-comments"></i>
+            </div>
+            <h1>Zangi Messenger</h1>
+            <p>Connect with friends instantly</p>
+        </div>
+
+        <!-- Tab Buttons -->
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="showTab('login')" id="loginTab">Login</button>
+            <button class="tab-btn" onclick="showTab('register')" id="registerTab">Register</button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm" class="form-section active">
+            <h2>Welcome Back</h2>
+            
+            <div class="input-group">
+                <i class="fas fa-phone"></i>
+                <input type="tel" id="loginPhone" placeholder="Phone Number" required>
+            </div>
+            
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <i class="fas fa-eye toggle-password" onclick="togglePassword('loginPassword')"></i>
+            </div>
+
+            <button class="submit-btn" onclick="login()">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <!-- Biometric Login Buttons -->
+            <div class="biometric-section">
+                <h3>Quick Login</h3>
+                
+                <button class="bio-btn face-id-btn" onclick="startFaceID()" id="faceIDBtn">
+                    <i class="fas fa-face-smile"></i>
+                    <span>Face ID</span>
+                </button>
+
+                <button class="bio-btn fingerprint-btn" onclick="checkFingerprint()" id="fingerprintBtn">
+                    <i class="fas fa-fingerprint"></i>
+                    <span>Fingerprint</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerForm" class="form-section">
+            <h2>Create Account</h2>
+            
+            <div class="profile-upload">
+                <div class="profile-preview" id="profilePreview">
+                    <i class="fas fa-user"></i>
+                </div>
+                <input type="file" id="profilePic" accept="image/*" onchange="previewImage(this)">
+                <label for="profilePic" class="upload-btn">
+                    <i class="fas fa-camera"></i> Add Photo
+                </label>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="regName" placeholder="Full Name" required>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-phone"></i>
+                <input type="tel" id="regPhone" placeholder="Phone Number" required>
+            </div>
+            
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="regPassword" placeholder="Create Password" required>
+                <i class="fas fa-eye toggle-password" onclick="togglePassword('regPassword')"></i>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
+            </div>
+
+            <button class="submit-btn" onclick="register()">
+                <i class="fas fa-user-plus"></i> Register
+            </button>
+
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <!-- Biometric Registration -->
+            <div class="biometric-section">
+                <h3>Set Up Biometric Login</h3>
+                
+                <button class="bio-btn face-id-btn" onclick="registerFaceID()" id="regFaceIDBtn">
+                    <i class="fas fa-face-smile"></i>
+                    <span>Setup Face ID</span>
+                </button>
+
+                <button class="bio-btn fingerprint-btn" onclick="registerFingerprint()" id="regFingerprintBtn">
+                    <i class="fas fa-fingerprint"></i>
+                    <span>Setup Fingerprint</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Face ID Modal -->
+    <div id="faceIDModal" class="modal">
+        <div class="modal-content face-modal">
+            <div class="face-scanner">
+                <div class="scanner-ring"></div>
+                <div class="scanner-ring"></div>
+                <div class="scanner-ring"></div>
+                <video id="faceVideo" autoplay playsinline></video>
+                <canvas id="faceCanvas" style="display:none;"></canvas>
+                <div class="face-overlay">
+                    <div class="face-frame"></div>
+                </div>
+            </div>
+            <h3 id="faceStatus">Position your face in the frame</h3>
+            <div class="scan-progress">
+                <div class="progress-bar" id="scanProgress"></div>
+            </div>
+            <p id="scanTimer">10 seconds remaining</p>
+            <button class="cancel-btn" onclick="closeFaceModal()">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+        </div>
+    </div>
+
+    <!-- Fingerprint Modal -->
+    <div id="fingerprintModal" class="modal">
+        <div class="modal-content">
+            <div class="fingerprint-scanner">
+                <i class="fas fa-fingerprint"></i>
+                <div class="scan-animation"></div>
+            </div>
+            <h3 id="fpStatus">Touch your fingerprint sensor</h3>
+            <p class="fp-instruction">Place your finger on your device's fingerprint sensor</p>
+            <button class="cancel-btn" onclick="closeFingerprintModal()">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-info-circle"></i>
+        <span id="toastMessage">Message</span>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/biometric.js"></script>
+    <script src="js/theme.js"></script>
+</body>
+</html>

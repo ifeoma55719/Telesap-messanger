@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zangi Messenger - Chat</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/chat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="user-profile">
+                    <div class="avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <h3 id="userName">Loading...</h3>
+                        <p id="userPhone">...</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="showStatusModal()" title="My Status">
+                        <i class="fas fa-circle-notch"></i>
+                    </button>
+                    <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    <button class="icon-btn" onclick="logout()" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchContacts" placeholder="Search contacts..." onkeyup="searchContacts()">
+            </div>
+
+            <div class="contacts-list" id="contactsList">
+                <!-- Contacts will be loaded here -->
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-area" id="chatArea">
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState">
+                <div class="empty-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h2>Welcome to Zangi Messenger</h2>
+                <p>Select a contact to start chatting</p>
+            </div>
+
+            <!-- Active Chat -->
+            <div class="active-chat" id="activeChat" style="display: none;">
+                <div class="chat-header">
+                    <button class="back-btn" onclick="closeChat()">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div class="contact-info">
+                        <div class="avatar" id="chatAvatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3 id="chatContactName">Contact Name</h3>
+                            <p id="chatContactStatus">
+                                <span class="status-dot online"></span>
+                                <span id="statusText">Online</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="icon-btn" onclick="startVoiceCall()" title="Voice Call">
+                            <i class="fas fa-phone"></i>
+                        </button>
+                        <button class="icon-btn" onclick="showContactStatus()" title="View Status">
+                            <i class="fas fa-circle-notch"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="messages-container" id="messagesContainer">
+                    <!-- Messages will appear here -->
+                </div>
+
+                <div class="chat-input-area">
+                    <button class="icon-btn" onclick="toggleEmojiPicker()">
+                        <i class="fas fa-smile"></i>
+                    </button>
+                    <div class="emoji-picker" id="emojiPicker">
+                        <span onclick="insertEmoji('😀')">😀</span>
+                        <span onclick="insertEmoji('😂')">😂</span>
+                        <span onclick="insertEmoji('😍')">😍</span>
+                        <span onclick="insertEmoji('🤔')">🤔</span>
+                        <span onclick="insertEmoji('😢')">😢</span>
+                        <span onclick="insertEmoji('😡')">😡</span>
+                        <span onclick="insertEmoji('👍')">👍</span>
+                        <span onclick="insertEmoji('👎')">👎</span>
+                        <span onclick="insertEmoji('❤️')">❤️</span>
+                        <span onclick="insertEmoji('🎉')">🎉</span>
+                        <span onclick="insertEmoji('🔥')">🔥</span>
+                        <span onclick="insertEmoji('👋')">👋</span>
+                    </div>
+                    <button class="icon-btn" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <input type="file" id="fileInput" style="display: none" accept="image/*,video/*,audio/*" onchange="handleFileUpload(this)">
+                    
+                    <div class="input-wrapper">
+                        <input type="text" id="messageInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+                    </div>
+                    
+                    <button class="send-btn" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Status Modal -->
+    <div id="statusModal" class="modal">
+        <div class="modal-content status-modal">
+            <h3>My Status</h3>
+            <div class="status-preview" id="statusPreview">
+                <p>No status yet</p>
+            </div>
+            <div class="status-input-group">
+                <input type="text" id="statusInput" placeholder="What's on your mind?" maxlength="140">
+                <button onclick="postStatus()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <div class="status-media">
+                <button onclick="document.getElementById('statusMediaInput').click()">
+                    <i class="fas fa-image"></i> Add Photo/Video
+                </button>
+                <input type="file" id="statusMediaInput" style="display: none" accept="image/*,video/*" onchange="handleStatusMedia(this)">
+            </div>
+            <button class="cancel-btn" onclick="closeStatusModal()">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+    </div>
+
+    <!-- View Status Modal -->
+    <div id="viewStatusModal" class="modal">
+        <div class="modal-content view-status-modal">
+            <div class="status-header">
+                <div class="avatar" id="viewStatusAvatar"></div>
+                <h4 id="viewStatusName">Contact</h4>
+                <span id="viewStatusTime">Just now</span>
+            </div>
+            <div class="status-content" id="viewStatusContent">
+                <!-- Status content -->
+            </div>
+            <button class="cancel-btn" onclick="closeViewStatusModal()">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+    </div>
+
+    <!-- Voice Call Modal -->
+    <div id="callModal" class="modal">
+        <div class="modal-content call-modal">
+            <div class="call-info">
+                <div class="call-avatar" id="callAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 id="callContactName">Contact</h3>
+                <p id="callStatus">Calling...</p>
+            </div>
+            <div class="call-timer" id="callTimer">00:00</div>
+            <div class="call-actions">
+                <button class="call-btn mute" onclick="toggleMute()" id="muteBtn">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <button class="call-btn end" onclick="endCall()">
+                    <i class="fas fa-phone-slash"></i>
+                </button>
+                <button class="call-btn speaker" onclick="toggleSpeaker()" id="speakerBtn">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+            </div>
+            <audio id="localAudio" autoplay muted></audio>
+            <audio id="remoteAudio" autoplay></audio>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-info-circle"></i>
+        <span id="toastMessage">Message</span>
+    </div>
+
+    <!-- Network Status Indicator -->
+    <div id="networkStatus" class="network-status">
+        <i class="fas fa-wifi"></i>
+        <span>Online</span>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/calls.js"></script>
+</body>
+</html>
